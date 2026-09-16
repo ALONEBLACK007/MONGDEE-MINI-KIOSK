@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080f1c">
+  <title>MONGDEE MINI KIOSK</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <main class="kiosk">
+    <section class="cam-pane" aria-label="กล้องสแกนสินค้า">
+      <img id="kioskCamera" src="/api/camera/stream" alt="ภาพสดจากกล้องสำหรับสแกนสินค้า">
+      <div class="status-badge" id="statusBadge" role="status">กำลังเชื่อมต่อ…</div>
+      <span class="cam-hint">หยิบสินค้าขึ้นมาให้กล้องเห็นในกรอบ</span>
+    </section>
+
+    <section class="info-pane" id="infoPane" aria-live="polite" aria-label="เรื่องราวของสินค้า"></section>
+  </main>
+
+  <dialog id="productPopup" class="product-popup" aria-label="รายละเอียดสินค้า">
+    <button type="button" id="popupCloseBtn" class="popup-close" aria-label="ปิด">×</button>
+    <div id="popupContent" class="popup-content"></div>
+  </dialog>
+
+  <div class="admin-menu-wrap">
+    <button type="button" id="adminMenuBtn" class="admin-menu-btn" aria-label="เมนูผู้ดูแลระบบ" aria-expanded="false">⚙</button>
+    <nav id="adminMenu" class="admin-menu" aria-label="ผู้ดูแลระบบ">
+      <a href="/products">สินค้าทั้งหมด</a>
+      <a href="/enroll">เพิ่มสินค้า</a>
+      <a href="/manage">จัดการสินค้า</a>
+      <a href="/dashboard">รายงาน</a>
+      <a href="/calibrate">ปรับตั้งค่ากล้อง</a>
+    </nav>
+  </div>
+  <button type="button" id="muteBtn" class="mute-btn" aria-label="เปิด/ปิดเสียง"></button>
+
+  <script src="/static/js/kiosk.js"></script>
+</body>
+</html>

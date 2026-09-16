@@ -1,0 +1,34 @@
+<title>รายงาน — MONGDEE MINI KIOSK</title>
+<link rel="stylesheet" href="/static/css/style.css">
+
+<div class="topnav">
+  <a class="brand" href="/">MONGDEE <span>MINI KIOSK</span></a>
+  <nav>
+    <a href="/">จอแสดงผล</a>
+    <a href="/enroll">เพิ่มสินค้า</a>
+    <a href="/manage">จัดการสินค้า</a>
+    <a href="/dashboard" class="active">รายงาน</a>
+    <a href="/calibrate">ปรับตั้งค่า</a>
+  </nav>
+</div>
+
+<div class="page">
+  <div class="stat-row">
+    <div class="card stat-card"><div class="num" id="statTotalScans">-</div><div class="label">ยอดสแกนทั้งหมด</div></div>
+    <div class="card stat-card"><div class="num" id="statTotalProducts">-</div><div class="label">จำนวนสินค้าในระบบ</div></div>
+    <div class="card stat-card"><div class="num" id="statTopProduct">-</div><div class="label">สินค้ายอดนิยม</div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <h3 style="margin-top:0;">สินค้าที่ได้รับความสนใจ</h3>
+    <div class="bar-chart" id="barChart"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0;">ช่วงเวลาที่มีผู้สแกนมากที่สุด</h3>
+    <div class="hourly-chart" id="hourlyChart"></div>
+    <div class="hourly-labels" id="hourlyLabels"></div>
+  </div>
+</div>
+
+<script src="/static/js/dashboard.js"></script>

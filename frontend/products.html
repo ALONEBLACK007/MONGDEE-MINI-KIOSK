@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1220">
+  <title>สินค้าทั้งหมด — MONGDEE MINI KIOSK</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <header class="topnav">
+    <a class="brand" href="/">MONGDEE <span>MINI KIOSK</span></a>
+    <a href="/" class="page-close" aria-label="ปิดหน้าสินค้า กลับไปหน้าสแกน">
+      <span aria-hidden="true">×</span> ปิด
+    </a>
+  </header>
+
+  <main class="page">
+    <h1>สินค้าทั้งหมด</h1>
+    <p class="hint" id="showcaseStatus">กำลังโหลด…</p>
+    <div id="showcaseGrid" class="showcase-grid"></div>
+  </main>
+
+  <dialog id="productPopup" class="product-popup" aria-label="รายละเอียดสินค้า">
+    <button type="button" id="popupCloseBtn" class="popup-close" aria-label="ปิด">×</button>
+    <div id="popupContent" class="popup-content"></div>
+  </dialog>
+
+  <script src="/static/js/products.js"></script>
+</body>
+</html>
