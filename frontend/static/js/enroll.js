@@ -269,6 +269,43 @@ cameraSelectBtn.addEventListener("click", async () => {
 
 loadCameraDevices();
 
+// -------- Live product-detection status + bounding box --------
+
+const detectBadge = document.getElementById("detectBadge");
+const detectBox = document.getElementById("detectBox");
+const detectLabel = document.getElementById("detectLabel");
+
+async function pollDetectStatus() {
+  try {
+    const res = await fetch("/api/camera/status");
+    const status = await res.json();
+    if (!status.camera_open) {
+      detectBadge.textContent = "ไม่พบภาพสดจากกล้อง";
+      detectBadge.className = "pill warn";
+    } else if (!status.has_reference) {
+      detectBadge.textContent = "ยังไม่ได้ตั้งค่าพื้นเปล่า — ไปที่หน้าปรับตั้งค่าก่อนสแกน";
+      detectBadge.className = "pill warn";
+    } else if (status.state === "present") {
+      detectBadge.textContent = "ตรวจพบสินค้าในกรอบแล้ว พร้อมสแกน";
+      detectBadge.className = "pill ok";
+    } else {
+      detectBadge.textContent = "ยังไม่พบสินค้า — วางสินค้าให้อยู่กึ่งกลางกรอบ";
+      detectBadge.className = "pill";
+    }
+
+    applyDetectBoxStatus(detectBox, detectLabel, status);
+  } catch (err) {
+    detectBadge.textContent = "เชื่อมต่อสถานะกล้องไม่ได้";
+    detectBadge.className = "pill warn";
+    detectBox.className = "detect-box";
+    detectLabel.textContent = "";
+  }
+}
+
+positionDetectBox(detectBox);
+pollDetectStatus();
+setInterval(pollDetectStatus, 400);
+
 async function loadCatalog() {
   const refresh = document.getElementById("refreshCatalogBtn");
   refresh.disabled = true;

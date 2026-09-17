@@ -57,13 +57,23 @@ app.mount("/captures", StaticFiles(directory=str(config.CAPTURES_DIR)), name="ca
 @app.get("/api/camera/status")
 def camera_status():
     snap = camera_module.camera_manager.snapshot()
+    camera_open = camera_module.camera_manager.is_open
+    has_reference = camera_module.camera_manager.has_reference
+    if not camera_open or not has_reference or snap.state != camera_module.PresenceState.PRESENT:
+        box_status = "none"
+    elif snap.sharpness < config.MIN_SHARPNESS:
+        box_status = "blurry"
+    else:
+        box_status = "ok"
     return {
         "state": snap.state.value,
         "foreground_ratio": snap.foreground_ratio,
-        "camera_open": camera_module.camera_manager.is_open,
-        "has_reference": camera_module.camera_manager.has_reference,
+        "camera_open": camera_open,
+        "has_reference": has_reference,
         "frame_fresh": snap.fresh,
         "motion_ratio": snap.motion_ratio,
+        "sharpness": snap.sharpness,
+        "box_status": box_status,
         "updated_at": snap.updated_at,
     }
 

@@ -28,6 +28,7 @@ class CameraSnapshot:
     generation: int = 0
     captured_at: float = 0.0  # monotonic clock for freshness
     motion_ratio: float = 0.0
+    sharpness: float = 0.0
 
     @property
     def fresh(self) -> bool:
@@ -93,13 +94,24 @@ def _small_gray(frame: np.ndarray) -> np.ndarray:
     return cv2.GaussianBlur(gray, (5, 5), 0)
 
 
+def _resized_roi_gray(frame: np.ndarray, fractions=None) -> np.ndarray:
+    gray = cv2.cvtColor(crop_to_roi(frame, fractions), cv2.COLOR_BGR2GRAY)
+    if gray.shape[1] > 320:
+        gray = cv2.resize(gray, (320, max(1, round(gray.shape[0] * 320 / gray.shape[1]))))
+    return gray
+
+
+def frame_sharpness(frame: np.ndarray, fractions=None) -> float:
+    """Laplacian-variance focus score of the ROI, same scale as select_quality_frames
+    uses per-frame — lets the live status endpoint flag a blurry feed before capture."""
+    return float(cv2.Laplacian(_resized_roi_gray(frame, fractions), cv2.CV_64F).var())
+
+
 def select_quality_frames(frames: list[np.ndarray], fractions=None) -> list[np.ndarray]:
     """Drop dark/clipped and blurred captures, preserving rotation order."""
     scores = []
     for frame in frames:
-        gray = cv2.cvtColor(crop_to_roi(frame, fractions), cv2.COLOR_BGR2GRAY)
-        if gray.shape[1] > 320:
-            gray = cv2.resize(gray, (320, max(1, round(gray.shape[0] * 320 / gray.shape[1]))))
+        gray = _resized_roi_gray(frame, fractions)
         clipped = float(np.mean((gray < 4) | (gray > 251)))
         sharpness = float(cv2.Laplacian(gray, cv2.CV_64F).var())
         scores.append(sharpness if clipped < 0.90 else 0.0)
@@ -295,7 +307,10 @@ class CameraManager:
                     self._off_since = None
             if state != self._snapshot.state:
                 generation += 1
-            self._snapshot = CameraSnapshot(frame, state, ratio, time.time(), generation, time.monotonic(), motion)
+            # Only the PRESENT state ever surfaces sharpness (see /api/camera/status'
+            # box_status) — skip the extra Laplacian pass while the platform is empty.
+            sharpness = frame_sharpness(frame, self._roi) if state == PresenceState.PRESENT else 0.0
+            self._snapshot = CameraSnapshot(frame, state, ratio, time.time(), generation, time.monotonic(), motion, sharpness)
 
     def _loop(self) -> None:
         try:

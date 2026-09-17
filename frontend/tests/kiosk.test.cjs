@@ -29,9 +29,17 @@ let pendingTimeout = null;
 const context = vm.createContext({
   document: { getElementById: element, createElement: tag => new Element(tag), addEventListener() {} },
   localStorage: { getItem() { return null; }, setItem() {} },
-  fetch: async url => ({ ok: true, json: async () => url.includes('/camera/') ? { camera_open: true, has_reference: true, state: 'empty' } : response }),
+  fetch: async url => ({
+    ok: true,
+    json: async () => {
+      if (url === '/api/camera/status') return { camera_open: true, has_reference: true, state: 'empty', box_status: 'none' };
+      if (url === '/api/calibration') return { roi: { x: 0.2, y: 0.15, w: 0.6, h: 0.75 }, presence_on_ratio: 0.12, presence_off_ratio: 0.04 };
+      return response;
+    },
+  }),
   setInterval() {}, setTimeout(fn) { pendingTimeout = fn; return 1; }, clearTimeout() { pendingTimeout = null; }, AbortSignal, Intl, console,
 });
+vm.runInContext(fs.readFileSync('frontend/static/js/detect-box.js', 'utf8'), context);
 vm.runInContext(fs.readFileSync('frontend/static/js/kiosk.js', 'utf8'), context);
 
 (async () => {

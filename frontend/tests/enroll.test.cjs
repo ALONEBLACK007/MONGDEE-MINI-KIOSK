@@ -21,9 +21,12 @@ const batch = { session_id: 'scan-session', frames: [1, 2, 3].map(id => ({ frame
 const context = vm.createContext({
   document: { getElementById: element, createElement: () => new Element() },
   URLSearchParams, location: { search: '' }, console,
+  setInterval: () => 0, clearInterval: () => {},
   FormData: class { entries() { return Object.entries({ name: 'New product', price: '', production_date: '', expiry_date: '' }); } },
   fetch: async (url, options) => {
     if (url === '/api/camera/devices') return { ok: true, json: async () => ({ devices: [], current_index: 0 }) };
+    if (url === '/api/camera/status') return { ok: true, json: async () => ({ camera_open: true, has_reference: true, state: 'empty', box_status: 'none' }) };
+    if (url === '/api/calibration') return { ok: true, json: async () => ({ roi: { x: 0.2, y: 0.15, w: 0.6, h: 0.75 }, presence_on_ratio: 0.12, presence_off_ratio: 0.04 }) };
     if (url === '/api/products') return { ok: true, json: async () => catalog };
     if (url === '/api/enroll/start') return { ok: !failCapture, json: async () => failCapture ? { detail: 'Camera unavailable' } : batch };
     if (url.endsWith('/confirm')) {
@@ -36,6 +39,7 @@ const context = vm.createContext({
     return { ok: true, json: async () => ({}) };
   },
 });
+vm.runInContext(fs.readFileSync('frontend/static/js/detect-box.js', 'utf8'), context);
 vm.runInContext(fs.readFileSync('frontend/static/js/enroll.js', 'utf8'), context);
 (async () => {
   await new Promise(resolve => setImmediate(resolve));

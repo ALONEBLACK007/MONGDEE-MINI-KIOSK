@@ -14,7 +14,7 @@ _COVER_MAX_BYTES = 8 * 1024 * 1024
 _COVER_MAX_DIM = 1600
 
 _VIDEO_EXTENSIONS = {"video/mp4": ".mp4", "video/webm": ".webm", "video/ogg": ".ogv"}
-_VIDEO_MAX_BYTES = 60 * 1024 * 1024
+_VIDEO_MAX_BYTES = 200 * 1024 * 1024
 
 
 @router.get("", response_model=list[ProductOut])
@@ -87,7 +87,7 @@ async def upload_product_video(product_id: int, file: UploadFile = File(...)):
 
     raw = await file.read()
     if len(raw) > _VIDEO_MAX_BYTES:
-        raise HTTPException(400, "ไฟล์ใหญ่เกินไป (จำกัด 60MB)")
+        raise HTTPException(400, "ไฟล์ใหญ่เกินไป (จำกัด 200MB)")
 
     videos_dir = config.CAPTURES_DIR / "videos"
     videos_dir.mkdir(parents=True, exist_ok=True)

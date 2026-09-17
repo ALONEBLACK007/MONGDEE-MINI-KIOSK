@@ -30,7 +30,13 @@
         <button type="button" id="cameraSelectBtn" class="secondary small">ใช้กล้องนี้</button>
         <span id="cameraSelectStatus" class="hint" style="margin:0;"></span>
       </div>
-      <div class="cam-box"><img id="camFeed" src="/api/camera/stream" alt="live camera"></div>
+      <div class="cam-box">
+        <img id="camFeed" src="/api/camera/stream" alt="live camera">
+        <div class="detect-box" id="detectBox"><span class="detect-label" id="detectLabel"></span></div>
+      </div>
+      <div class="button-row" style="margin:0.6rem 0;">
+        <span id="detectBadge" class="pill" role="status" aria-live="polite">กำลังตรวจสอบกล้อง…</span>
+      </div>
       <p class="hint">
         วางสินค้าบนแท่นหมุนให้อยู่กึ่งกลางเฟรม แล้วกดปุ่มด้านล่าง ระบบจะเก็บภาพชุดระหว่างที่แท่นหมุน
         (ภาพทั้งหมดจะถูกเลือกไว้ให้ก่อน — คลิกรูปที่ไม่ชัด/ไม่ต้องการเพื่อเอาออก จนเหลือรูปที่ใช้ได้อย่างน้อย
@@ -82,4 +88,5 @@
   </section>
 </div>
 
+<script src="/static/js/detect-box.js"></script>
 <script src="/static/js/enroll.js"></script>

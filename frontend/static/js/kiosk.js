@@ -339,6 +339,9 @@ async function pollRecognition() {
   }
 }
 
+const detectBox = document.getElementById("detectBox");
+const detectLabel = document.getElementById("detectLabel");
+
 async function pollCameraStatus() {
   try {
     const res = await fetch("/api/camera/status");
@@ -350,13 +353,18 @@ async function pollCameraStatus() {
     } else {
       statusBadge.textContent = status.state === "present" ? "เห็นสินค้าแล้ว" : "พร้อมสแกน";
     }
+
+    applyDetectBoxStatus(detectBox, detectLabel, status);
   } catch (err) {
     statusBadge.textContent = "เชื่อมต่อไม่ได้";
+    detectBox.className = "detect-box";
+    detectLabel.textContent = "";
   }
 }
 
 renderIdle();
 pollRecognition();
+positionDetectBox(detectBox);
 pollCameraStatus();
 setInterval(pollRecognition, 1000);
 setInterval(pollCameraStatus, 2000);
